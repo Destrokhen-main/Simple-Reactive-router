@@ -80,5 +80,4 @@ export const createRouter = function(inputArray) {
     }
   }
 }
-
 export const routerLink = routerL;
