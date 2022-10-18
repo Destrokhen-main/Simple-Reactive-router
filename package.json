@@ -1,0 +1,23 @@
+{
+  "name": "sreact-router",
+  "version": "0.0.1",
+  "description": "router for simple-reactive",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Destrokhen-main/Simple-Reactive-router.git"
+  },
+  "keywords": [
+    "simple-reactive",
+    "sreact"
+  ],
+  "author": "Destrokhen <armagiddon19@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Destrokhen-main/Simple-Reactive-router/issues"
+  },
+  "homepage": "https://github.com/Destrokhen-main/Simple-Reactive-router#readme"
+}
