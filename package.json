@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Destrokhen-main/Simple-Reactive-router/issues"
   },
-  "homepage": "https://github.com/Destrokhen-main/Simple-Reactive-router#readme"
+  "homepage": "https://github.com/Destrokhen-main/Simple-Reactive-router#readme",
+  "dependencies": {
+    "sreact": "https://github.com/Destrokhen-main/sReact-npm"
+  }
 }
