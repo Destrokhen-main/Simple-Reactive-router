@@ -48,6 +48,8 @@ export const beforeRouter = function(callback) {
 export const createRouter = function(inputArray) {
   checkObjectRouter(inputArray);
 
+  inputRouters = inputArray;
+
   const Path = document.location.pathname;
 
   let findComponent = inputArray.find(routerObject => routerObject.path === Path);
@@ -58,14 +60,9 @@ export const createRouter = function(inputArray) {
       routerL.value = findComponent.component;
       curRouter = findComponent.path;
     } else if (findComponent.redirect !== undefined) {
-      const findRedirect = inputArray.find(routerObject => routerObject.path === findComponent.redirect);
-      changeState("replaceState", findRedirect.path);
-      routerL.value = findRedirect.component;
-      curRouter = findRedirect.path;
+      recursiveRouting("replaceState")(findComponent.redirect)
     }
   }
-
-  inputRouters = inputArray;
   currentPath = curRouter;
   windowEvent();
 
