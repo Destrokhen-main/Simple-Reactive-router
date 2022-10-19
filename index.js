@@ -75,6 +75,7 @@ export const createRouter = function(inputArray) {
       currentRoute: () => currentPath !== null 
                             ? inputRouters.find(e => e.path === currentPath)
                             : undefined,
+      allRoute: () => inputRouters,
       push: recursiveRouting("pushState"),
       replace: recursiveRouting("replaceState")
     }
