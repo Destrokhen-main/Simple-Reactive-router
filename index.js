@@ -65,6 +65,9 @@ export const createRouter = function(inputArray) {
   }
   currentPath = curRouter;
   windowEvent();
+  if (beforeRouterFunc !== null) {
+    beforeRouterFunc(undefined, findComponent);
+  }
 
   return {
     $router: {
