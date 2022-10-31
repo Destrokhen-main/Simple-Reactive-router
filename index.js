@@ -6,9 +6,14 @@ const routerL = refC(() => ({tag: "div"}));
 let inputRouters = [];
 let currentPath = null;
 let beforeRouterFunc = null;
+let mode = null;
 
 function changeState(state, link) {
-  history[state](null, null, link);
+  if (mode === "hash") {
+    window.location.hash = "#" + link
+  } else {
+    history[state](null, null, link);
+  }
   currentPath = link;
 }
 
@@ -45,12 +50,14 @@ export const beforeRouter = function(callback) {
   beforeRouterFunc = callback;
 }
 
-export const createRouter = function(inputArray) {
+export const createRouter = function(inputArray, m = "history") {
   checkObjectRouter(inputArray);
+
+  mode = m;
 
   inputRouters = inputArray;
 
-  const Path = document.location.pathname;
+  const Path = mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
 
   let findComponent = inputArray.find(routerObject => routerObject.path === Path);
   let curRouter = null;
