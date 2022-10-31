@@ -1,5 +1,5 @@
 import { checkObjectRouter } from "./lint";
-import { refC } from "sreact";
+import { refC } from "orve";
 import er from "./error";
 
 const routerL = refC(() => ({tag: "div"}));

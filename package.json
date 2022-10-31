@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/Destrokhen-main/Simple-Reactive-router#readme",
   "dependencies": {
-    "sreact": "https://github.com/Destrokhen-main/Simple-Reactive-npm.git"
+    "orve": "^0.6.3"
   }
 }
