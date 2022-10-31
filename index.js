@@ -41,7 +41,7 @@ const recursiveRouting = (name) => (path) => {
 
 function windowEvent () {
   window.onpopstate = function() {
-    const current = document.location.pathname;
+    const current = mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
     recursiveRouting("pushState")(current);
   }
 }
