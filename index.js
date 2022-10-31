@@ -57,7 +57,10 @@ export const createRouter = function(inputArray, m = "history") {
 
   inputRouters = inputArray;
 
-  const Path = mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
+  let Path = mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
+  if (Path === "") {
+    Path = "/";
+  }
 
   let findComponent = inputArray.find(routerObject => routerObject.path === Path);
   let curRouter = null;
