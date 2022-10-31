@@ -105,6 +105,12 @@ beforeRouter(function(_, to) {
 export default route;
 ```
 
+### Router mode
+If you need use HashMode in your project. Insert second parametrs in createRouter "hash"
+```
+createRouter(router, "hash")
+```
+
 ### Use in your app
 To use the router correctly in your application. You need to put a specific tag in it
 
