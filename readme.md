@@ -1,5 +1,5 @@
 ### Hi all!
-This is a plugin for Simple-Reactive
+This is a plugin for `orve` - https://github.com/Destrokhen-main/Simple-Reactive-npm
 
 It will allow you to create a router for your application
 
