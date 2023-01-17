@@ -1,96 +1,121 @@
+/*
+[ ] - Дубликаты
+[ ] - pushState почитать
+ 
+*/
+
 import { checkObjectRouter } from "./lint";
 import { refC } from "orve";
-import er from "./error";
 
-const routerL = refC(() => ({tag: "div"}));
-let inputRouters = [];
-let currentPath = null;
-let beforeRouterFunc = null;
-let mode = null;
+const ROUTER = {
+  allRouter: [],
+  currentRouter: "/",
+  RouterLink: refC(),
+  mode: ""
+};
 
-function changeState(state, link, component) {
-  if (mode === "hash") {
-    window.location.hash = "#" + link
-  } else {
-    history[state](null, null, link);
-  }
-  currentPath = link;
-  routerL.value = component;
-}
+/**
+ * find main router
+ * @param {string} path - path router
+ * @returns {object | undefined}
+ */
+function findMainComp(path) {
+  const currentRouter = ROUTER.allRouter.find((route) => route.path === path);
 
-const recursiveRouting = (name) => (path) => {
-  const afterRoute = inputRouters.find(e => e.path === path);
-  const beforeRoute = inputRouters.find(e => e.path === currentPath);
-  if (currentPath || afterRoute && !currentPath) {
-    if (currentPath !== path) {
-      if (afterRoute.redirect) {
-        return recursiveRouting("pushState")(afterRoute.redirect);
-      }
-      changeState(name, path, afterRoute.component);
-      if (beforeRouterFunc !== null) {
-        beforeRouterFunc(beforeRoute, afterRoute);
-      }
-    } else {
-      //console.error("Вы пытаетесь пройти по текущему router. операция прервана")
+  if (currentRouter !== undefined) {
+    if (currentRouter.redirect) {
+      return findMainComp(currentRouter.redirect);
+    } else if (currentRouter.component) {
+      return currentRouter;
     }
   } else {
-    er(`${currentPath} - не найден`);
+    return undefined;
   }
 }
 
-function windowEvent () {
-  if (mode === "history") {
-    window.onpopstate = function() {
+/**
+ * replace url
+ * @param {string} state - pushState or replaceState
+ * @param {string} path - url
+ */
+function changeURl(state = "pushState",path) {
+  if (ROUTER.mode === "hash") {
+    window.location.hash = "#" + path
+  } else {
+    window.history[state]({}, "", path);
+    worker(path);
+  }
+}
+
+function windowEvent() {
+  if (ROUTER.mode === "history") {
+    window.addEventListener("popstate", () => {
       const current = document.location.pathname;
-      recursiveRouting("pushState")(current);
-    }
+      console.log(current);
+      worker(current);
+    })
   } else {
     window.addEventListener("hashchange", () => {
       const current = document.location.hash.replace("#", "");
-      recursiveRouting("pushState")(current);
+      worker(current);
     })
   }
 }
 
-export const beforeRouter = function(callback) {
-  beforeRouterFunc = callback;
+
+function worker(path = null) {
+  let Path = path;
+
+  if (path === null) {
+    Path = ROUTER.mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
+    if (Path === "") Path = "/";
+  }
+
+  const currentRouter = ROUTER.allRouter.find((route) => route.path === Path);
+
+  let bool = false;
+
+  if (currentRouter !== undefined) {
+    if (currentRouter.redirect === undefined) {
+      ROUTER.currentRouter = currentRouter.path;
+      ROUTER.RouterLink.value = currentRouter.component;
+      //changeURl("replaceState", currentRouter.path);
+      bool = true;
+    } else if (currentRouter.redirect) {
+      const route = findMainComp(currentRouter.redirect);
+      if (route) {
+        ROUTER.currentRouter = route.path;
+        ROUTER.RouterLink.value = route.component;
+        changeURl("replaceState", route.path);
+        bool = true;
+      }
+    }
+  } else {
+    console.error("404");
+  }
+  return bool;
 }
 
-export const createRouter = function(inputArray, m = "history") {
-  checkObjectRouter(inputArray);
+export const createRouter = function(arrRouter, mode = "history") {
+  checkObjectRouter(arrRouter);
 
-  mode = m;
+  ROUTER.allRouter = arrRouter;
+  ROUTER.mode = mode;
 
-  inputRouters = inputArray;
+  const bool = worker();
 
-  let Path = mode === "history" ? document.location.pathname : document.location.hash.replace("#", "");
-  if (Path === "") {
-    Path = "/";
+  if (bool) {
+    windowEvent();
   }
-
-  let findComponent = inputArray.find(routerObject => routerObject.path === Path);
-  let curRouter = null;
-  if (findComponent !== undefined) {
-    if(findComponent.component !== undefined) {
-      routerL.value = findComponent.component;
-      curRouter = findComponent.path;
-    } else if (findComponent.redirect !== undefined) {
-      recursiveRouting("replaceState")(findComponent.redirect);
-    }
-  }
-  currentPath = curRouter;
-  windowEvent();
 
   return {
     $router: {
-      currentPath: () => currentPath,
-      currentRoute: () => currentPath !== null 
-                            ? inputRouters.find(e => e.path === currentPath)
-                            : undefined,
-      allRoute: () => inputRouters,
-      push: recursiveRouting("pushState"),
-      replace: recursiveRouting("replaceState")
+      push: (path) => { changeURl("pushState", path); },
+      replace: (path) => { changeURl("replaceState", path); },
+      route: () => ({allRouter: ROUTER.allRouter, currentRouter: ROUTER.currentRouter}),
+      currentRoute: () => ROUTER.currentRouter
     }
   }
 }
-export const RouterLink = routerL;
+
+export const RouterLink = ROUTER.RouterLink;
